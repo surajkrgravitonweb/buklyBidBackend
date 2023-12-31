@@ -238,3 +238,68 @@ def delete_profile_model(request, pk):
     profile_model = ProfileModel.objects.get(pk=pk)
     profile_model.delete()
     return Response({"message": "Profile deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+import pandas as pd
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Deal
+
+@csrf_exempt  # Only if you choose CSRF exemption or use ensure_csrf_cookie decorator
+def upload_deals(request):
+
+    if request.method == 'POST':
+        try:
+            excel_file = request.FILES['excel_file']
+            df = pd.read_excel(excel_file)
+
+            for _, row in df.iterrows():
+                Deal.objects.create(
+                    deal_no=row['Deal No'],
+                    brand=row['Brand'],
+                    model=row['Model'],
+                    new_state=row['New State'],
+                    location=row['Location'],
+                    deal_date=row['Deal Date'],
+                    customer_name=row['Customer Name'],
+                    registration_no=row['Registration No'],
+                    rc_available=row['Rc Available'],
+                    repo_date=row['Repo Date'],
+                    segment=row['Segment'],
+                    parked_at=row['Parked At'],
+                    yard_city=row['Yard City'],
+                    valuation_amount=row['Valuation Amount'],
+                    valuation_report_link=row['Valuation Report Link'],
+                    manufacturing_year=row['Manufacturing Year'],
+                    base_rate=row['Base rate']
+                )
+
+            return JsonResponse({'message': 'Data uploaded successfully'})
+        except Exception as e:
+            return JsonResponse({'error': f'Error uploading data: {str(e)}'}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+
+
+
+from django.http import JsonResponse
+
+from .models import Deal
+
+from django.core import serializers
+ 
+def get_deals(request):
+
+    if request.method == 'GET':
+
+        deals = Deal.objects.all()
+
+        data = serializers.serialize('json', deals)
+
+        return JsonResponse({'deals': data})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+

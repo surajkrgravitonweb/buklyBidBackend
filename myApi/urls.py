@@ -8,6 +8,10 @@ from .views import (
 )
 from .views import *
 urlpatterns = [
+
+    path('upload_deals/', upload_deals, name='upload_deals'),
+    path('get_deals/', get_deals, name='get_deals'),
+
     path('create/', create_contact, name='create_contact'),
     path('list/', list_contacts, name='list_contacts'),
     path('retrieve/<int:pk>/', retrieve_contact, name='retrieve_contact'),
