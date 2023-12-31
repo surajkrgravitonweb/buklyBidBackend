@@ -17,8 +17,6 @@ class OTPVerifiaction(models.Model):
     is_verfied = models.BooleanField(default=False)
 
 
-
-
 class ServicesModel(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -28,8 +26,6 @@ class ServicesModel(models.Model):
     def __str__(self):
         return self.title
     
-
-
 
 class CarModel(models.Model):
     model_name = models.CharField(max_length=255)
@@ -55,4 +51,3 @@ class ProfileModel(models.Model):
 
     def __str__(self):
         return self.name
-
