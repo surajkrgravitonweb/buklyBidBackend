@@ -37,6 +37,7 @@ class CarModel(models.Model):
     ownership = models.CharField(max_length=50)
     start_time = models.TimeField()
     end_time = models.TimeField()
+    rc_available =models.BooleanField(default=False)
 
     def __str__(self):
         return self.model_name
@@ -48,6 +49,8 @@ class ProfileModel(models.Model):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15)
     verification = models.BooleanField(default=False)
+    aadhar = models.ImageField(upload_to='images/',default=False)
+    panCard = models.ImageField(upload_to='images/' ,default=False)
 
     def __str__(self):
         return self.name
@@ -76,3 +79,24 @@ class Deal(models.Model):
  
     def __str__(self):
         return self.deal_no
+    
+
+class Bid(models.Model):
+    userId = models.IntegerField()
+    CarId = models.IntegerField()
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+
+# models.py
+from django.db import models
+
+class Item(models.Model):
+    name = models.CharField(max_length=255)
+
+class Bidding(models.Model):
+    user_id = models.IntegerField()
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)

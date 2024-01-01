@@ -12,6 +12,15 @@ urlpatterns = [
     path('upload_deals/', upload_deals, name='upload_deals'),
     path('get_deals/', get_deals, name='get_deals'),
 
+ 
+    path('bidding/', bid_list, name='bid-list'),
+    path('bidding/<int:bid_id>/', bid_detail, name='bid-detail'),
+
+    path('place_bid/', place_bid, name='place-bid'),
+    path('get_highest_bid/<int:item_id>/', get_highest_bid, name='get-highest-bid'),
+
+
+
     path('create/', create_contact, name='create_contact'),
     path('list/', list_contacts, name='list_contacts'),
     path('retrieve/<int:pk>/', retrieve_contact, name='retrieve_contact'),

@@ -25,3 +25,30 @@ class ProfileModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileModel
         fields = '__all__'
+
+
+# serializers.py
+from rest_framework import serializers
+from .models import Bid
+
+class BidSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bid
+        fields = '__all__'
+
+
+# serializers.py
+from rest_framework import serializers
+from .models import Bid, Item
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = '__all__'
+
+class BidingSerializer(serializers.ModelSerializer):
+    item = ItemSerializer()
+
+    class Meta:
+        model = Bidding
+        fields = '__all__'

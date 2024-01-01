@@ -303,3 +303,87 @@ def get_deals(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
+
+
+
+# views.py
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Bid
+from .serializers import BidSerializer
+
+@api_view(['GET', 'POST'])
+def bid_list(request):
+    if request.method == 'GET':
+        bids = Bid.objects.all()
+        serializer = BidSerializer(bids, many=True)
+        return Response({"message": "Bids retrieved successfully", "status": "success", "data": serializer.data})
+
+    elif request.method == 'POST':
+        serializer = BidSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Bid created successfully", "status": "success", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Invalid data", "status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def bid_detail(request, bid_id):
+    try:
+        bid = Bid.objects.get(pk=bid_id)
+    except Bid.DoesNotExist:
+        return Response({"message": "Bid not found", "status": "error"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = BidSerializer(bid)
+        return Response({"message": "Bid retrieved successfully", "status": "success", "data": serializer.data})
+
+    elif request.method == 'PUT':
+        serializer = BidSerializer(bid, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Bid updated successfully", "status": "success", "data": serializer.data})
+        return Response({"message": "Invalid data", "status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        bid.delete()
+        return Response({"message": "Bid deleted successfully", "status": "success"})
+
+
+
+# views.py
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Bid, Item
+from .serializers import BidingSerializer, ItemSerializer
+
+@api_view(['POST'])
+def place_bid(request):
+    serializer = BidingSerializer(data=request.data)
+    if serializer.is_valid():
+        # Check if the bid is higher than the current highest bid for the item
+        item_id = serializer.validated_data['item']['id']
+        current_highest_bid = Bidding.objects.filter(item_id=item_id).order_by('-amount').first()
+
+        if current_highest_bid is None or serializer.validated_data['amount'] > current_highest_bid.amount:
+            serializer.save()
+            return Response({"message": "Bid placed successfully", "status": "success", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"message": "Bid amount is not higher than the current highest bid", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"message": "Invalid data", "status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_highest_bid(request, item_id):
+    try:
+        item = Item.objects.get(pk=item_id)
+    except Item.DoesNotExist:
+        return Response({"message": "Item not found", "status": "error"}, status=status.HTTP_404_NOT_FOUND)
+
+    highest_bid = Bidding.objects.filter(item=item).order_by('-amount').first()
+
+    if highest_bid:
+        serializer = BidingSerializer(highest_bid)
+        return Response({"message": "Highest bid retrieved successfully", "status": "success", "data": serializer.data})
+    else:
+        return Response({"message": "No bids for this item", "status": "success"})
