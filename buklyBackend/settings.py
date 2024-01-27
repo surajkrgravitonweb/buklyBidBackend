@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-!i%2pjw^6!eoholt+(=(cz4zdn1q&83e+_$%zk57((5e3v&g@b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','legal257.pythonanywhere.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -39,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myApi',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -71,7 +73,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'buklyBackend.wsgi.application'
 
+CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOW_CREDENTIALS = True
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -82,7 +86,8 @@ DATABASES = {
     }
 }
 
-
+# # AUTH_USER_MODEL = 'myApi.User'
+# AUTH_USER_MODEL = 'myApi.User'
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -124,3 +129,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER='surajvivo56789@gmail.com'
+EMAIL_HOST_PASSWORD='ocfx wdjy vdnf wowz'
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
